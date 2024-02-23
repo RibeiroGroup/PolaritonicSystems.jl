@@ -80,3 +80,33 @@ function energy_filter!(state::Vector, sys::QuantumSystem, ω0, δω)
     end
     normalize!(state)
 end
+
+"""
+    get_q_transformation
+
+From a system object (`sys`) returns a transformation matrix that takes a state vector in the *local* basis
+and changes into the k (or q) representation, that is, reciprocal space. 
+
+!! Not thouroughly tested for when the number of photon modes is not equal the number of sites. 
+"""
+function get_q_transformation(sys::QuantumSystem)
+    Nm = length(sys.mol_range)
+    Nc = length(sys.phot_range)
+    Um = zeros(ComplexF64, Nc, Nm)
+
+    for i = 1:Nc
+        q = sys.phot_wavevectors[i]
+        for j = 1:Nm
+            r = sys.mol_positions[j]
+            Um[i,j] = exp(-im*q*r)
+        end
+    end
+
+    U = zeros(ComplexF64, Nc+Nm, Nc+Nm)
+
+    U[1:Nc, 1:Nc] .= I(Nc)
+
+    U[(Nc+1):end, (Nc+1):end] .= Um ./ √(Nm)
+
+    return U
+end

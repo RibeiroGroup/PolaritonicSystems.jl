@@ -50,6 +50,9 @@ include("Hamiltonian.jl")
 # Quantum System Objects
 include("System.jl")
 
+# Dispersion relations, group velocities, etc.
+include("DispersionProperties.jl")
+
 # States and time evolution
 include("States.jl")
 
